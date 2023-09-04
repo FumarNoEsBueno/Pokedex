@@ -2,70 +2,104 @@
 
 <div [style]="{ width: '55%', marginLeft:'20%', marginTop:'5%' }">
 
-<p-panel header="Pokedex V2.0">
-
-  <p-autoComplete [(ngModel)]="pokemonName" [suggestions]="pokemonSuggested" (ngModelChange)="filterPokemon()" ></p-autoComplete>
-
-
-  <div class="flex flex-wrap gap-1">
-    <div class="flex align-items-center">
-      <p-radioButton name="pizza" value="pokedex" [(ngModel)]="orderType" inputId="ingredient1" (ngModelChange)="orderPokemon($event)" ></p-radioButton>
-      <label class="ml-2">Ordenar por numero de pokedex</label>
-    </div>
-
-    <div class="flex align-items-center">
-      <p-radioButton name="pizza" value="ascendentName" [(ngModel)]="orderType" inputId="ingredient2" (ngModelChange)="orderPokemon($event)"></p-radioButton>
-      <label class="ml-2">Orden alfavetico ascendente</label>
-    </div>
-
-    <div class="flex align-items-center">
-      <p-radioButton name="pizza" value="descendentName" [(ngModel)]="orderType" inputId="ingredient3" (ngModelChange)="orderPokemon($event)"></p-radioButton>
-      <label class="ml-2">Orden alfavetico descendiente</label>
-    </div>
-
-  </div>
-
-<p-table [value]="pokemonList">
-  <ng-template pTemplate="header">
-    <tr>
-      <th>Nombre</th>
-      <th [ngStyle]="{'text-align': 'right'}">Acciones</th>
-    </tr>
-  </ng-template>
-
-  <ng-template pTemplate="body" let-pokemon>
-    <tr>
-      <td>{{pokemon.name}}</td>
-      <td [ngStyle]="{'text-align': 'right'}">
-        <p-button label="Submit"  (onClick)="getPokemonDetails(pokemon.url)"></p-button>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
-  <p-paginator (onPageChange)="onPageChange($event)" [first]="1" [rows]="10" [totalRecords]="totalPokemon"></p-paginator>
+    <p-panel header="Pokedex V2.0">
+        <p>Buscar pokemon</p>
+        <p-autoComplete [(ngModel)]="pokemonName" [suggestions]="pokemonSuggested" (ngModelChange)="filterPokemon()" ></p-autoComplete>
 
 
-  <p-dialog header="Header" [(visible)]="visible" [style]="{width: '50vw'}">
-    <div *ngIf="selectedPokemonDetails">
-
-      <p>Nombre: {{ selectedPokemonDetails.name }}</p>
-      <p>Peso: {{ selectedPokemonDetails.weight }}</p>
-      <p>Altura: {{ selectedPokemonDetails.height }}</p>
-      <p-carousel #carousel [value]="selectedPokemonImages" [numVisible]="2" [numScroll]="3" [circular]="false" class="carrusel"
-      >
-        <ng-template let-product pTemplate="item">
-          <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
-            <div class="mb-3">
-              <img [src]="product" [alt]="selectedPokemonDetails.name" class="img-pokemon" />
+        <div class="flex flex-wrap gap-1 margin">
+            <div class="flex align-items-center marginToList">
+                <p-radioButton name="pizza" value="pokedex" [(ngModel)]="orderType" inputId="ingredient1" (ngModelChange)="orderPokemon($event)" ></p-radioButton>
+                <label class="ml-2">Orden por numero de pokedex</label>
             </div>
-          </div>
-        </ng-template>
-      </p-carousel>
-    </div>
-  </p-dialog>
-</p-panel>
+
+            <div class="flex align-items-center marginToList">
+                <p-radioButton name="pizza" value="ascendentName" [(ngModel)]="orderType" inputId="ingredient2" (ngModelChange)="orderPokemon($event)"></p-radioButton>
+                <label class="ml-2">Orden alfabetico ascendente</label>
+            </div>
+
+            <div class="flex align-items-center">
+                <p-radioButton name="pizza" value="descendentName" [(ngModel)]="orderType" inputId="ingredient3" (ngModelChange)="orderPokemon($event)"></p-radioButton>
+                <label class="ml-2">Orden alfabetico descendiente</label>
+            </div>
+
+        </div>
+
+        <p-table [value]="pokemonList">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Nombre</th>
+                    <th [ngStyle]="{'text-align': 'right'}">Acciones</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-pokemon>
+                <tr>
+                    <td>{{pokemon.name}}</td>
+                    <td [ngStyle]="{'text-align': 'right'}">
+                        <p-button label="Ver detalles"  (onClick)="getPokemonDetails(pokemon.url)"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <p-paginator (onPageChange)="onPageChange($event)" [first]="1" [rows]="10" [totalRecords]="totalPokemon"></p-paginator>
+
+
+        <p-dialog header="Detalles de {{selectedPokemonDetails.name}}" [(visible)]="visible" [style]="{width: '50vw'}">
+            <div *ngIf="selectedPokemonDetails">
+
+                <p>Nombre: {{ selectedPokemonDetails.name }}</p>
+                <p>#Pokedex: {{ selectedPokemonDetails.id }}</p>
+                <p>Peso: {{ selectedPokemonDetails.weight }}</p>
+                <p>Altura: {{ selectedPokemonDetails.height }}</p>
+                <p>Tipos: {{ selectedPokemonTypes }}</p>
+                <p-carousel #carousel [value]="selectedPokemonImages" [numVisible]="2" [numScroll]="3" [circular]="true" class="carrusel">
+                    <ng-template let-product pTemplate="item">
+                        <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                            <div class="mb-3">
+
+
+                                <img [src]="product" [alt]="selectedPokemonDetails.name" class="img-pokemon" />
+
+
+                            </div>
+                        </div>
+
+                    </ng-template>
+                </p-carousel>
+
+                <h2>Lista de movimientos</h2>
+                <p-table [value]="selectedPokemonMovesDetails" [tableStyle]="{ 'min-width': '50rem' }">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Daño base</th>
+                            <th>Precisión</th>
+                            <th>PP</th>
+                            <th>Tipo</th>
+                            <th>Efecto</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-move>
+                        <tr>
+                            <td>{{ move.name }}</td>
+                            <td>{{ move.power }}</td>
+                            <td>{{ move.accuracy }}</td>
+                            <td>{{ move.pp }}</td>
+                            <td>{{ move.type.name }}</td>
+                            <td>{{ move.effect }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <p-paginator (onPageChange)="onMovePageChange($event)" [first]="movesTablePosition" [rows]="5" [totalRecords]="selectedPokemonMoves.length"></p-paginator>
+
+            </div>
+
+
+        </p-dialog>
+    </p-panel>
 
 
 
- </div>
-
+</div>
